@@ -124,56 +124,115 @@ const PLURAL_TO_CATEGORY: Record<string, Category> = {
 
 interface EthspecifyExceptions {
   version?: string;
+  // Top-level `exceptions:` (Prysm) or nested under `specrefs.exceptions:`
+  // (Teku, Lodestar). buildExceptionMap merges both shapes.
+  exceptions?: Record<string, string[]>;
   specrefs?: { exceptions?: Record<string, string[]> };
 }
 
-function buildExceptionMap(parsed: EthspecifyExceptions, rawText: string): ExceptionMap {
+// Parse exceptions from raw YAML text directly. This sidesteps two real-world
+// quirks the structured `yaml` parser stumbles on:
+//
+//   - `exceptions:` lives at the top level in Prysm's file but is nested under
+//     `specrefs:` in Teku and Lodestar.
+//   - Prysm's file has two `presets:` keys inside `exceptions:` (one per
+//     fork group). Strict YAML rejects duplicate map keys.
+//
+// We track indentation: enter on a line whose key is exactly `exceptions`,
+// remember the category whenever an `  <plural>:` line appears one level
+// deeper, and collect `- ITEM[#fork]` bullets at the level deeper still. A
+// running `# reason` comment is attached to each bullet.
+function buildExceptionMap(_parsed: EthspecifyExceptions, rawText: string): ExceptionMap {
   const exMap: ExceptionMap = new Map();
-  const exceptions = parsed.specrefs?.exceptions ?? {};
+  const lines = rawText.split('\n');
 
-  // Pre-build a name -> trailing-comment lookup from the raw YAML so we can attach
-  // a human-readable reason. The conventional pattern is a `# Reason` comment line
-  // above a block of `- ITEM#fork` entries.
-  const reasonByName = buildCommentLookup(rawText);
+  let inExceptions = false;
+  let exceptionsIndent = -1;     // indent of the `exceptions:` key
+  let categoryIndent = -1;       // indent of `<plural>:` keys inside it
+  let itemIndent = -1;           // indent of `- ITEM` bullets
+  let currentCategory: Category | null = null;
+  let runningComment = '';
 
-  for (const [plural, items] of Object.entries(exceptions)) {
-    const cat = PLURAL_TO_CATEGORY[plural];
-    if (!cat) continue;
-    for (const item of items) {
+  const indentOf = (line: string) => {
+    const m = line.match(/^( *)/);
+    return m ? m[1].length : 0;
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const indent = indentOf(line);
+
+    // Comments accumulate; blank lines reset.
+    if (trimmed.startsWith('#')) {
+      const comment = trimmed.replace(/^#+\s?/, '');
+      runningComment = runningComment ? `${runningComment} ${comment}` : comment;
+      continue;
+    }
+    if (trimmed === '') {
+      runningComment = '';
+      continue;
+    }
+
+    // Leaving the exceptions block on a sibling-or-shallower key (and not a bullet).
+    if (inExceptions && !trimmed.startsWith('-') && indent <= exceptionsIndent) {
+      inExceptions = false;
+      currentCategory = null;
+    }
+
+    if (!inExceptions) {
+      // Detect entry into an `exceptions:` mapping anywhere in the file.
+      const enter = trimmed.match(/^exceptions\s*:\s*$/);
+      if (enter) {
+        inExceptions = true;
+        exceptionsIndent = indent;
+        categoryIndent = -1;
+        itemIndent = -1;
+        currentCategory = null;
+        runningComment = '';
+        continue;
+      }
+      // Otherwise nothing to do for non-exception lines.
+      runningComment = '';
+      continue;
+    }
+
+    // Inside exceptions. Detect category headers like `presets:` at the level
+    // immediately deeper than `exceptions:`. Use the first such line we see
+    // to fix the category indent.
+    const catMatch = trimmed.match(/^([a-z_]+)\s*:\s*$/);
+    if (catMatch && (categoryIndent < 0 || indent === categoryIndent)) {
+      categoryIndent = indent;
+      itemIndent = -1;
+      currentCategory = PLURAL_TO_CATEGORY[catMatch[1]] ?? null;
+      // A new category section ends the previous block's comment context.
+      runningComment = '';
+      continue;
+    }
+
+    // Bullet items.
+    const itemMatch = trimmed.match(/^-\s+(\S.*?)\s*$/);
+    if (itemMatch && currentCategory) {
+      if (itemIndent < 0) itemIndent = indent;
+      if (indent !== itemIndent) continue; // ignore unexpected nesting
+      const item = itemMatch[1];
       const { name, fork } = parseName(item);
       const forkKey = item.includes('#') ? fork : '*';
-      const key = `${cat}/${forkKey}/${name}`;
-      const reason = reasonByName.get(item) ?? 'Excluded from coverage.';
+      const key = `${currentCategory}/${forkKey}/${name}`;
+      const reason = runningComment || 'Excluded from coverage.';
       exMap.set(key, reason);
+      continue;
     }
+
+    // Anything else inside exceptions just clears the running comment.
+    runningComment = '';
   }
+
   return exMap;
 }
 
-function buildCommentLookup(rawText: string): Map<string, string> {
-  // Convention in .ethspecify.yml: each excluded item is preceded by a
-  // `# reason` comment line (possibly multi-line) and items are grouped in
-  // blocks separated by blank lines. The current comment resets on any line
-  // that is neither a comment nor an item — including blanks — so reasons do
-  // not bleed across sections.
-  const out = new Map<string, string>();
-  const lines = rawText.split('\n');
-  let currentComment = '';
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('#')) {
-      const comment = trimmed.replace(/^#+\s?/, '');
-      currentComment = currentComment ? `${currentComment} ${comment}` : comment;
-      continue;
-    }
-    const itemMatch = trimmed.match(/^-\s+(.+?)\s*$/);
-    if (itemMatch) {
-      out.set(itemMatch[1], currentComment || 'Excluded from coverage.');
-      continue;
-    }
-    currentComment = '';
-  }
-  return out;
+function extractVersion(rawText: string): string | null {
+  const m = rawText.match(/^version\s*:\s*(\S+)\s*$/m);
+  return m ? m[1] : null;
 }
 
 function lookupException(
@@ -288,21 +347,24 @@ async function main() {
     const sha = clientShas[clientId];
     console.log(`[sync] processing ${clientId} files...`);
 
-    // exceptions (optional — Prysm currently ships no .ethspecify.yml)
+    // exceptions: `exceptionsFile` is now a repo-relative path so clients
+    // that put their .ethspecify.yml at the repo root (Prysm) work too. The
+    // parser is intentionally lenient — Prysm's file has duplicate `presets:`
+    // keys under `exceptions:` which strict YAML rejects.
     let exMap: ExceptionMap = new Map();
     if (c.exceptionsFile) {
       try {
-        const raw = await rawText(c.repo, sha, `${c.specrefsPath}/${c.exceptionsFile}`);
-        const parsed = parseYaml(raw) as EthspecifyExceptions;
-        if (parsed.version) {
-          clientEthspecifyVersions[clientId] = parsed.version;
-          console.log(`[sync]   ethspecify version: ${parsed.version}`);
+        const raw = await rawText(c.repo, sha, c.exceptionsFile);
+        const version = extractVersion(raw);
+        if (version) {
+          clientEthspecifyVersions[clientId] = version;
+          console.log(`[sync]   ethspecify version: ${version}`);
         }
-        exMap = buildExceptionMap(parsed, raw);
+        exMap = buildExceptionMap({}, raw);
         console.log(`[sync]   ${exMap.size} exception entries`);
       } catch (err) {
         console.warn(
-          `[sync]   no exceptions file (${c.exceptionsFile}): ${(err as Error).message}`,
+          `[sync]   no exceptions file at ${c.exceptionsFile}: ${(err as Error).message}`,
         );
       }
     }

@@ -3,6 +3,7 @@ import { CATEGORY_LABELS } from '../types/entity';
 import { ImplLinks } from './ImplLinks';
 import { buildSpecMarkdownUrl } from '../lib/githubUrl';
 import { langClass } from '../lib/language';
+import { highlight } from '../lib/highlight';
 
 interface Props {
   entity: SpecEntity;
@@ -48,8 +49,8 @@ export function EntityCard({ entity, clients, meta }: Props) {
             )}
           </div>
           {entity.specText.trim() ? (
-            <pre className="code">
-              <code>{entity.specText}</code>
+            <pre className="code lang-python">
+              <code dangerouslySetInnerHTML={{ __html: highlight(entity.specText, 'python') }} />
             </pre>
           ) : (
             <p className="empty">

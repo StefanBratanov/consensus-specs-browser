@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { fetchSource, buildRawUrl } from '../lib/fetchSource';
 import { extractSnippet } from '../lib/snippet';
 import { langClass, langForFile } from '../lib/language';
+import { highlight } from '../lib/highlight';
 import type { ClientConfig, SourceRef } from '../types/entity';
 
 interface Props {
@@ -19,6 +20,19 @@ type State =
 export function SourceSnippet({ client, sha, source }: Props) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<State>({ kind: 'idle' });
+
+  // The file extension takes precedence over the client's primary language —
+  // a YAML preset file in a Java client should still highlight as YAML.
+  const lang = useMemo(() => {
+    const fromFile = langForFile(source.file);
+    return fromFile === 'text' ? client.language : fromFile;
+  }, [source.file, client.language]);
+
+  const html = useMemo(() => {
+    if (state.kind !== 'ready') return '';
+    const code = state.showFull ? state.fullCode : state.code;
+    return highlight(code, lang);
+  }, [state, lang]);
 
   useEffect(() => {
     if (!open || state.kind !== 'idle') return;
@@ -75,8 +89,8 @@ export function SourceSnippet({ client, sha, source }: Props) {
                   {state.showFull ? 'Snippet only' : 'Show full file'}
                 </button>
               </div>
-              <pre className={`code source ${langClass(client.language, langForFile(source.file))}`}>
-                <code>{state.showFull ? state.fullCode : state.code}</code>
+              <pre className={`code source ${langClass(lang)}`}>
+                <code dangerouslySetInnerHTML={{ __html: html }} />
               </pre>
             </>
           )}

@@ -45,6 +45,8 @@ export function extractSnippet(
     endIdx = walkForwardMethod(lines, anchorIdx);
   } else if (kind === 'field') {
     endIdx = walkForwardField(lines, anchorIdx);
+  } else if (kind === 'line') {
+    endIdx = anchorIdx;
   } else {
     // Unknown: cap at 60 lines past the anchor.
     endIdx = Math.min(anchorIdx + 60, totalLines - 1);
@@ -59,11 +61,15 @@ export function extractSnippet(
   };
 }
 
-type Kind = 'method' | 'field' | 'unknown';
+type Kind = 'method' | 'field' | 'line' | 'unknown';
 
 function classify(search: string | undefined, anchorText: string): Kind {
   if (search?.includes('(')) return 'method';
   if (search?.includes('=')) return 'field';
+  // A search string that isn't a method or assignment — e.g. a YAML key like
+  // "EPOCHS_PER_SYNC_COMMITTEE_PERIOD:" used by Teku preset/config entries —
+  // points at a single anchor line.
+  if (search) return 'line';
   if (/\b(public|private|protected|static)?\s*[\w<>?,\s\[\]]+\s+\w+\s*\(/.test(anchorText))
     return 'method';
   if (/=\s*[^=]/.test(anchorText)) return 'field';

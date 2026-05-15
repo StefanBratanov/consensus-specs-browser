@@ -47,11 +47,6 @@ export function ImplLinks({ client, sha, impl }: Props) {
               )}
             </div>
             <div className="path" title={s.file}>{s.file}</div>
-            {s.search && (
-              <div className="search-pattern">
-                <code>{s.regex ? `/${s.search}/` : s.search}</code>
-              </div>
-            )}
             <JavaSnippet client={client} sha={sha} source={s} />
           </div>
         );

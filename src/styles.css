@@ -339,23 +339,30 @@ code, pre {
   margin-bottom: 6px;
   font-weight: 600;
 }
-.pane-label .py {
-  background: #3776ab;
+.lang-chip {
   color: #fff;
   padding: 1px 6px;
   border-radius: 3px;
   font-size: 9px;
   text-transform: none;
   letter-spacing: 0;
+  background: #6c7889;
 }
-.pane-label .java {
-  background: #f89820;
-  color: #fff;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 9px;
-  text-transform: none;
-  letter-spacing: 0;
+.lang-chip.lang-python      { background: #3776ab; }
+.lang-chip.lang-java        { background: #f89820; }
+.lang-chip.lang-go          { background: #00add8; }
+.lang-chip.lang-typescript  { background: #3178c6; }
+.lang-chip.lang-javascript  { background: #f7df1e; color: #1f2328; }
+.lang-chip.lang-rust        { background: #dea584; color: #1f2328; }
+.lang-chip.lang-nim         { background: #ffe953; color: #1f2328; }
+.lang-chip.lang-yaml        { background: #cb171e; }
+.lang-chip.lang-json        { background: #292929; }
+
+/* multi-client impl pane: separate clients visually */
+.impl-pane > div + div {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
 }
 
 pre.code {
@@ -462,7 +469,7 @@ pre.code {
   margin: 0;
 }
 .snippet-status.error { color: var(--unmapped); }
-pre.code.java {
+pre.code.source {
   border: 0;
   border-radius: 0;
   max-height: 480px;

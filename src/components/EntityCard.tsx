@@ -2,6 +2,7 @@ import type { ClientsConfig, SnapshotMeta, SpecEntity } from '../types/entity';
 import { CATEGORY_LABELS } from '../types/entity';
 import { ImplLinks } from './ImplLinks';
 import { buildSpecMarkdownUrl } from '../lib/githubUrl';
+import { langClass } from '../lib/language';
 
 interface Props {
   entity: SpecEntity;
@@ -38,7 +39,7 @@ export function EntityCard({ entity, clients, meta }: Props) {
       <div className="entity-body">
         <section className="spec-pane">
           <div className="pane-label">
-            <span className="py">Python</span>
+            <span className={`lang-chip ${langClass('Python')}`}>Python</span>
             <span>Spec pseudocode</span>
             {entity.specHash && (
               <span style={{ marginLeft: 'auto', color: 'var(--text-mute)', fontSize: 11 }}>
@@ -67,7 +68,7 @@ export function EntityCard({ entity, clients, meta }: Props) {
             return (
               <div key={clientId}>
                 <div className="pane-label">
-                  <span className={client.language === 'Java' ? 'java' : 'py'}>
+                  <span className={`lang-chip ${langClass(client.language)}`}>
                     {client.language}
                   </span>
                   <span>{client.name}</span>

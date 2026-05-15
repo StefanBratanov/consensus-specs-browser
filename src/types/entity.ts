@@ -25,15 +25,21 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   custom_type: 'Custom Types',
 };
 
-// Maps each Teku specrefs filename to the canonical category used in the UI.
-export const TEKU_FILE_CATEGORY: Record<string, Category> = {
+// Maps a specrefs filename to the canonical category used in the UI. Same
+// across clients — Teku/Prysm publish six files, Lodestar adds `types.yml`
+// for custom types.
+export const FILE_CATEGORY: Record<string, Category> = {
   'functions.yml': 'function',
   'constants.yml': 'constant_var',
   'configs.yml': 'config_var',
   'presets.yml': 'preset_var',
   'containers.yml': 'ssz_object',
   'dataclasses.yml': 'dataclass',
+  'types.yml': 'custom_type',
 };
+
+// Backwards-compatible alias.
+export const TEKU_FILE_CATEGORY = FILE_CATEGORY;
 
 // Inside a `<spec>` tag, the attribute keyed by category.
 export const SPEC_TAG_ATTR_BY_CATEGORY: Record<Category, string> = {

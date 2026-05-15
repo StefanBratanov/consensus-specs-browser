@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchSource, buildRawUrl } from '../lib/fetchSource';
-import { extractSnippet } from '../lib/javaSnippet';
+import { extractSnippet } from '../lib/snippet';
+import { langClass, langForFile } from '../lib/language';
 import type { ClientConfig, SourceRef } from '../types/entity';
 
 interface Props {
@@ -15,7 +16,7 @@ type State =
   | { kind: 'ready'; code: string; startLine: number; endLine: number; totalLines: number; truncated: boolean; showFull: boolean; fullCode: string }
   | { kind: 'error'; message: string };
 
-export function JavaSnippet({ client, sha, source }: Props) {
+export function SourceSnippet({ client, sha, source }: Props) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<State>({ kind: 'idle' });
 
@@ -74,7 +75,7 @@ export function JavaSnippet({ client, sha, source }: Props) {
                   {state.showFull ? 'Snippet only' : 'Show full file'}
                 </button>
               </div>
-              <pre className="code java">
+              <pre className={`code source ${langClass(client.language, langForFile(source.file))}`}>
                 <code>{state.showFull ? state.fullCode : state.code}</code>
               </pre>
             </>

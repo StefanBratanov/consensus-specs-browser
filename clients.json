@@ -17,5 +17,43 @@
     "sourceUrlTemplate": "https://github.com/Consensys/teku/blob/{sha}/{file}",
     "sourceUrlLineTemplate": "https://github.com/Consensys/teku/blob/{sha}/{file}#L{line}",
     "rawUrlTemplate": "https://raw.githubusercontent.com/Consensys/teku/{sha}/{file}"
+  },
+  "prysm": {
+    "name": "Prysm",
+    "language": "Go",
+    "repo": "OffchainLabs/prysm",
+    "branch": "develop",
+    "specrefsPath": "specrefs",
+    "files": [
+      "functions.yml",
+      "constants.yml",
+      "containers.yml",
+      "dataclasses.yml",
+      "configs.yml",
+      "presets.yml"
+    ],
+    "sourceUrlTemplate": "https://github.com/OffchainLabs/prysm/blob/{sha}/{file}",
+    "sourceUrlLineTemplate": "https://github.com/OffchainLabs/prysm/blob/{sha}/{file}#L{line}",
+    "rawUrlTemplate": "https://raw.githubusercontent.com/OffchainLabs/prysm/{sha}/{file}"
+  },
+  "lodestar": {
+    "name": "Lodestar",
+    "language": "TypeScript",
+    "repo": "ChainSafe/lodestar",
+    "branch": "unstable",
+    "specrefsPath": "specrefs",
+    "files": [
+      "functions.yml",
+      "constants.yml",
+      "containers.yml",
+      "dataclasses.yml",
+      "configs.yml",
+      "presets.yml",
+      "types.yml"
+    ],
+    "exceptionsFile": ".ethspecify.yml",
+    "sourceUrlTemplate": "https://github.com/ChainSafe/lodestar/blob/{sha}/{file}",
+    "sourceUrlLineTemplate": "https://github.com/ChainSafe/lodestar/blob/{sha}/{file}#L{line}",
+    "rawUrlTemplate": "https://raw.githubusercontent.com/ChainSafe/lodestar/{sha}/{file}"
   }
 }

@@ -286,13 +286,19 @@ async function main() {
     const sha = clientShas[clientId];
     console.log(`[sync] processing ${clientId} files...`);
 
-    // exceptions
+    // exceptions (optional — Prysm currently ships no .ethspecify.yml)
     let exMap: ExceptionMap = new Map();
     if (c.exceptionsFile) {
-      const raw = await rawText(c.repo, sha, `${c.specrefsPath}/${c.exceptionsFile}`);
-      const parsed = parseYaml(raw) as EthspecifyExceptions;
-      exMap = buildExceptionMap(parsed, raw);
-      console.log(`[sync]   ${exMap.size} exception entries`);
+      try {
+        const raw = await rawText(c.repo, sha, `${c.specrefsPath}/${c.exceptionsFile}`);
+        const parsed = parseYaml(raw) as EthspecifyExceptions;
+        exMap = buildExceptionMap(parsed, raw);
+        console.log(`[sync]   ${exMap.size} exception entries`);
+      } catch (err) {
+        console.warn(
+          `[sync]   no exceptions file (${c.exceptionsFile}): ${(err as Error).message}`,
+        );
+      }
     }
 
     for (const file of c.files) {

@@ -1,12 +1,17 @@
-# consensus-specs → Teku implementation browser
+# consensus-specs → client implementation browser
 
 A static UI that maps every Ethereum [consensus-specs] entity (function,
-constant, container, dataclass, config, preset) to where Teku implements it in
-Java. The mapping comes from Teku's [`specrefs/`][teku-specrefs] directory
-which follows the [ethspecify][] schema.
+constant, container, dataclass, config, preset, custom type) to where each
+consensus client implements it. Mappings come from each client's ethspecify-
+formatted `specrefs/` directory:
+
+| Client | Language | Source |
+|---|---|---|
+| Teku | Java | [`Consensys/teku/specrefs`](https://github.com/Consensys/teku/tree/master/specrefs) |
+| Prysm | Go | [`OffchainLabs/prysm/specrefs`](https://github.com/OffchainLabs/prysm/tree/develop/specrefs) |
+| Lodestar | TypeScript | [`ChainSafe/lodestar/specrefs`](https://github.com/ChainSafe/lodestar/tree/unstable/specrefs) |
 
 [consensus-specs]: https://github.com/ethereum/consensus-specs/tree/master/specs
-[teku-specrefs]: https://github.com/Consensys/teku/tree/master/specrefs
 [ethspecify]: https://github.com/ethereum/ethspecify
 
 ## What it shows
@@ -14,10 +19,12 @@ which follows the [ethspecify][] schema.
 For each spec entity you get:
 
 - The Python pseudocode from the spec, side-by-side with
-- Each registered Java source location in Teku (deep-linked to the exact line
-  in `github.com/Consensys/teku` at the pinned commit SHA),
+- Each registered client source location, deep-linked to the exact line in
+  GitHub at the pinned commit SHA, with an inline expander that fetches the
+  raw file and slices out the relevant declaration (brace-counted for methods,
+  one-line for fields / YAML keys),
 - A status badge: `mapped`, `unmapped`, or `excluded` (with the reason from
-  `.ethspecify.yml`),
+  each client's `.ethspecify.yml`),
 - Fork, category, and "library-provided" hints for KZG / light-client items.
 
 Filters in the sidebar: fork (phase0 … gloas), category (functions, constants,

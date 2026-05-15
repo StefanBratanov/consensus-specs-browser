@@ -1,6 +1,6 @@
 import type { ClientConfig, ClientImpl } from '../types/entity';
 import { buildSourceUrl } from '../lib/githubUrl';
-import { JavaSnippet } from './JavaSnippet';
+import { SourceSnippet } from './SourceSnippet';
 
 interface Props {
   client: ClientConfig;
@@ -47,7 +47,7 @@ export function ImplLinks({ client, sha, impl }: Props) {
               )}
             </div>
             <div className="path" title={s.file}>{s.file}</div>
-            <JavaSnippet client={client} sha={sha} source={s} />
+            <SourceSnippet client={client} sha={sha} source={s} />
           </div>
         );
       })}

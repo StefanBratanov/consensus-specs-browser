@@ -420,6 +420,55 @@ pre.code {
   color: var(--text-dim);
 }
 
+.snippet { margin-top: 6px; }
+.snippet-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+}
+.snippet-toggle:hover { color: var(--accent-hover); }
+.snippet-toggle .caret {
+  display: inline-block;
+  width: 10px;
+  font-family: ui-monospace, monospace;
+}
+.snippet-body {
+  margin-top: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--code-bg);
+}
+.snippet-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--text-mute);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-input);
+}
+.snippet-status {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+.snippet-status.error { color: var(--unmapped); }
+pre.code.java {
+  border: 0;
+  border-radius: 0;
+  max-height: 480px;
+  overflow: auto;
+}
+
 .copy-btn {
   background: none;
   border: 1px solid var(--border);

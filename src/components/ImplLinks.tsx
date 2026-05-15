@@ -1,5 +1,6 @@
 import type { ClientConfig, ClientImpl } from '../types/entity';
 import { buildSourceUrl } from '../lib/githubUrl';
+import { JavaSnippet } from './JavaSnippet';
 
 interface Props {
   client: ClientConfig;
@@ -51,6 +52,7 @@ export function ImplLinks({ client, sha, impl }: Props) {
                 <code>{s.regex ? `/${s.search}/` : s.search}</code>
               </div>
             )}
+            <JavaSnippet client={client} sha={sha} source={s} />
           </div>
         );
       })}

@@ -61,16 +61,29 @@ export function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Consensus-specs → Teku</h1>
+        <h1>Consensus-specs implementations</h1>
         <div className="meta">
-          <span title={`Teku @ ${meta.clientShas.teku ?? 'unknown'}`}>
-            Teku{' '}
-            <code>
-              {(meta.clientShas.teku ?? '').slice(0, 7)}
-            </code>
+          {Object.entries(clients).map(([id, c], i) => {
+            const sha = meta.clientShas[id];
+            return (
+              <span key={id}>
+                {i > 0 && <span className="sep">·</span>}
+                <a
+                  className="client-pin"
+                  href={`https://github.com/${c.repo}/tree/${sha ?? c.branch}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title={`${c.name} @ ${sha ?? c.branch}`}
+                >
+                  {c.name} <code>{(sha ?? '').slice(0, 7)}</code>
+                </a>
+              </span>
+            );
+          })}
+          <span className="sep">·</span>
+          <span title={new Date(meta.syncedAt).toLocaleString()}>
+            Synced {formatAge(meta.syncedAt)}
           </span>
-          <span>·</span>
-          <span>Synced {formatAge(meta.syncedAt)}</span>
         </div>
         <div className="spacer" />
         <RefreshButton refreshing={refreshing} onClick={onRefresh} />

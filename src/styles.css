@@ -107,7 +107,21 @@ code, pre {
   font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.app-header .meta .sep {
+  color: var(--border-strong);
+  padding: 0 2px;
+}
+.app-header .client-pin {
+  color: var(--text-dim);
+  text-decoration: none;
+}
+.app-header .client-pin:hover { color: var(--text); }
+.app-header .client-pin code {
+  font-size: 11px;
+  color: var(--text-mute);
 }
 
 .app-header .spacer { flex: 1; }

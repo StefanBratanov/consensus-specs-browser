@@ -13,6 +13,7 @@ import { EntityList } from './components/EntityList';
 import { RefreshButton } from './components/RefreshButton';
 import { CoverageBar } from './components/CoverageBar';
 import { EthspecifyBadge } from './components/EthspecifyBadge';
+import { ThemeButton } from './components/ThemeButton';
 
 const baked = loadBakedSnapshot();
 
@@ -93,6 +94,7 @@ export function App() {
           </span>
         </div>
         <div className="spacer" />
+        <ThemeButton />
         <RefreshButton refreshing={refreshing} onClick={onRefresh} />
       </header>
 

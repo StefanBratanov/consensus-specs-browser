@@ -22,6 +22,13 @@
   --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
+/* Light palette is defined once and applied via two selectors:
+   - `@media (prefers-color-scheme: light)` so OS preference works when the
+     user hasn't picked a theme explicitly (data-theme attribute absent).
+   - `:root[data-theme="light"]` for an explicit user choice, which wins
+     over the media query because attribute selectors are more specific.
+   `:root[data-theme="dark"]` re-pins the dark defaults for the inverse
+   case (light OS, user wants dark). */
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f6f8fa;
@@ -42,6 +49,46 @@
     --code-bg: #f6f8fa;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f8fa;
+  --bg-elev: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --border: #d0d7de;
+  --border-strong: #afb8c1;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --text-mute: #8c959f;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --accent-bg: #ddf4ff;
+  --mapped: #1a7f37;
+  --unmapped: #bc4c00;
+  --excluded: #8250df;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1419;
+  --bg-elev: #161c24;
+  --bg-card: #1c232e;
+  --bg-input: #20283280;
+  --border: #2a3340;
+  --border-strong: #3a4555;
+  --text: #e6edf3;
+  --text-dim: #97a3b3;
+  --text-mute: #6c7889;
+  --accent: #4c9aff;
+  --accent-hover: #6cb1ff;
+  --accent-bg: #1a3760;
+  --mapped: #56d364;
+  --unmapped: #d97757;
+  --excluded: #a371f7;
+  --code-bg: #11161d;
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -145,6 +192,28 @@ code, pre {
 @media (prefers-color-scheme: light) {
   .ethspecify-chip.mixed { background: #fff1f1; border-color: #ffaaaa; color: #a23030; }
 }
+:root[data-theme="light"] .ethspecify-chip.mixed {
+  background: #fff1f1; border-color: #ffaaaa; color: #a23030;
+}
+:root[data-theme="dark"] .ethspecify-chip.mixed {
+  background: #5a2727; border-color: #7a3030; color: #ffb4b4;
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+.theme-btn:hover { border-color: var(--border-strong); }
+.theme-btn .theme-icon { font-size: 13px; line-height: 1; }
+.theme-btn .theme-label { color: var(--text-dim); }
 
 .app-header .spacer { flex: 1; }
 

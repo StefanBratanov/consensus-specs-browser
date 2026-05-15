@@ -1,0 +1,31 @@
+{
+  "name": "consensus-specs-browser",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Browse Ethereum consensus-specs entities side-by-side with their client implementations (Teku today, multi-client tomorrow).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "sync": "tsx scripts/sync-data.ts",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-virtual": "^3.13.0",
+    "fuse.js": "^7.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.1"
+  }
+}

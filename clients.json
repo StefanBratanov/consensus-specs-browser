@@ -1,0 +1,21 @@
+{
+  "teku": {
+    "name": "Teku",
+    "language": "Java",
+    "repo": "Consensys/teku",
+    "branch": "master",
+    "specrefsPath": "specrefs",
+    "files": [
+      "functions.yml",
+      "constants.yml",
+      "containers.yml",
+      "dataclasses.yml",
+      "configs.yml",
+      "presets.yml"
+    ],
+    "exceptionsFile": ".ethspecify.yml",
+    "sourceUrlTemplate": "https://github.com/Consensys/teku/blob/{sha}/{file}",
+    "sourceUrlLineTemplate": "https://github.com/Consensys/teku/blob/{sha}/{file}#L{line}",
+    "rawUrlTemplate": "https://raw.githubusercontent.com/Consensys/teku/{sha}/{file}"
+  }
+}

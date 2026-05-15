@@ -12,6 +12,7 @@ import { SearchBar } from './components/SearchBar';
 import { EntityList } from './components/EntityList';
 import { RefreshButton } from './components/RefreshButton';
 import { CoverageBar } from './components/CoverageBar';
+import { EthspecifyBadge } from './components/EthspecifyBadge';
 
 const baked = loadBakedSnapshot();
 
@@ -65,6 +66,7 @@ export function App() {
         <div className="meta">
           {Object.entries(clients).map(([id, c], i) => {
             const sha = meta.clientShas[id];
+            const ver = meta.clientEthspecifyVersions?.[id];
             return (
               <span key={id}>
                 {i > 0 && <span className="sep">·</span>}
@@ -73,13 +75,18 @@ export function App() {
                   href={`https://github.com/${c.repo}/tree/${sha ?? c.branch}`}
                   target="_blank"
                   rel="noreferrer noopener"
-                  title={`${c.name} @ ${sha ?? c.branch}`}
+                  title={`${c.name} @ ${sha ?? c.branch}${ver ? `\nethspecify ${ver}` : ''}`}
                 >
                   {c.name} <code>{(sha ?? '').slice(0, 7)}</code>
                 </a>
               </span>
             );
           })}
+          <span className="sep">·</span>
+          <EthspecifyBadge
+            clients={clients}
+            versions={meta.clientEthspecifyVersions ?? {}}
+          />
           <span className="sep">·</span>
           <span title={new Date(meta.syncedAt).toLocaleString()}>
             Synced {formatAge(meta.syncedAt)}

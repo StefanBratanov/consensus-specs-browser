@@ -123,6 +123,7 @@ const PLURAL_TO_CATEGORY: Record<string, Category> = {
 };
 
 interface EthspecifyExceptions {
+  version?: string;
   specrefs?: { exceptions?: Record<string, string[]> };
 }
 
@@ -281,6 +282,7 @@ async function main() {
     clients: Record<string, ClientImpl>;
   };
   const byId = new Map<string, Aggregate>();
+  const clientEthspecifyVersions: Record<string, string> = {};
 
   for (const [clientId, c] of Object.entries(clients)) {
     const sha = clientShas[clientId];
@@ -292,6 +294,10 @@ async function main() {
       try {
         const raw = await rawText(c.repo, sha, `${c.specrefsPath}/${c.exceptionsFile}`);
         const parsed = parseYaml(raw) as EthspecifyExceptions;
+        if (parsed.version) {
+          clientEthspecifyVersions[clientId] = parsed.version;
+          console.log(`[sync]   ethspecify version: ${parsed.version}`);
+        }
         exMap = buildExceptionMap(parsed, raw);
         console.log(`[sync]   ${exMap.size} exception entries`);
       } catch (err) {
@@ -399,6 +405,7 @@ async function main() {
       pyspecVersion: 'teku-specrefs',
       specsSha,
       clientShas,
+      clientEthspecifyVersions,
       stats: {
         total: entities.length,
         mapped,

@@ -123,6 +123,28 @@ code, pre {
   font-size: 11px;
   color: var(--text-mute);
 }
+.ethspecify-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  cursor: help;
+  white-space: nowrap;
+}
+.ethspecify-chip code { color: var(--text); font-size: 10px; }
+.ethspecify-chip.mixed {
+  background: #5a2727;
+  border-color: #7a3030;
+  color: #ffb4b4;
+}
+@media (prefers-color-scheme: light) {
+  .ethspecify-chip.mixed { background: #fff1f1; border-color: #ffaaaa; color: #a23030; }
+}
 
 .app-header .spacer { flex: 1; }
 

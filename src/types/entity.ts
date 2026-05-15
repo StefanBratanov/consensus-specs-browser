@@ -130,6 +130,9 @@ export const SnapshotMetaSchema = z.object({
   pyspecVersion: z.string(),
   specsSha: z.string().optional(),
   clientShas: z.record(z.string(), z.string()),
+  // Per-client ethspecify schema version (from `.ethspecify.yml`). Absent for
+  // clients that don't ship one (e.g. Prysm).
+  clientEthspecifyVersions: z.record(z.string(), z.string()).default({}),
   stats: z.object({
     total: z.number(),
     mapped: z.number(),

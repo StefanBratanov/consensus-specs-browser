@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'es2022',
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 2000,
   },
 });

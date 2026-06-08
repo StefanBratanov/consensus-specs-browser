@@ -14,6 +14,7 @@ import { RefreshButton } from './components/RefreshButton';
 import { CoverageBar } from './components/CoverageBar';
 import { EthspecifyBadge } from './components/EthspecifyBadge';
 import { ThemeButton } from './components/ThemeButton';
+import { GitHubLink } from './components/GitHubLink';
 
 const baked = loadBakedSnapshot();
 
@@ -94,6 +95,7 @@ export function App() {
           </span>
         </div>
         <div className="spacer" />
+        <GitHubLink />
         <ThemeButton />
         <RefreshButton refreshing={refreshing} onClick={onRefresh} />
       </header>

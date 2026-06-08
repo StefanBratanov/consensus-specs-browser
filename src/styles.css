@@ -338,6 +338,22 @@ code, pre {
 .theme-btn .theme-icon { font-size: 13px; line-height: 1; }
 .theme-btn .theme-label { color: var(--text-dim); }
 
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.github-link:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
 .app-header .spacer { flex: 1; }
 
 .sidebar {

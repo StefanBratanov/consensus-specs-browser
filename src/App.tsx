@@ -66,7 +66,7 @@ export function App() {
       <header className="app-header">
         <h1>
           <img src="/ethereum.svg" className="eth-logo" alt="" aria-hidden="true" />
-          Consensus-specs implementations
+          consensus-specs implementations
         </h1>
         <div className="meta">
           {Object.entries(clients).map(([id, c], i) => {

@@ -336,6 +336,23 @@ async function main() {
   const specsSha = specsBranch.commit.sha;
   console.log(`[sync] consensus-specs master = ${specsSha}`);
 
+  // ------------- Early exit if SHAs unchanged -------------
+  if (existsSync(OUT_PATH)) {
+    try {
+      const existing: Snapshot = JSON.parse(await readFile(OUT_PATH, 'utf8'));
+      const same =
+        existing.meta.specsSha === specsSha &&
+        Object.keys(clientShas).length === Object.keys(existing.meta.clientShas).length &&
+        Object.entries(clientShas).every(([k, v]) => existing.meta.clientShas[k] === v);
+      if (same) {
+        console.log('[sync] all SHAs unchanged — nothing to do');
+        return;
+      }
+    } catch {
+      // corrupt/missing snapshot — proceed with full sync
+    }
+  }
+
   // ------------- Aggregate entities across clients -------------
   type Aggregate = Omit<SpecEntity, 'clients' | 'status'> & {
     clients: Record<string, ClientImpl>;

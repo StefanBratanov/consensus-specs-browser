@@ -65,7 +65,7 @@ export function App() {
     <div className="app">
       <header className="app-header">
         <h1>
-          <img src="/ethereum.svg" className="eth-logo" alt="" aria-hidden="true" />
+          <img src={`${import.meta.env.BASE_URL}ethereum.svg`} className="eth-logo" alt="" aria-hidden="true" />
           consensus-specs implementations
         </h1>
         <div className="meta">

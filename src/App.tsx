@@ -64,7 +64,10 @@ export function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Consensus-specs implementations</h1>
+        <h1>
+          <img src="/ethereum.svg" className="eth-logo" alt="" aria-hidden="true" />
+          Consensus-specs implementations
+        </h1>
         <div className="meta">
           {Object.entries(clients).map(([id, c], i) => {
             const sha = meta.clientShas[id];
